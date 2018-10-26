@@ -5,9 +5,12 @@ var util = require("util");
 var data = require("./data/timesheet.json");
 var app = express();
 var isNew = true;
+
+//Two way support to accept the POST data
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
+//Console log the request details
 app.use(function(req, res, next) {
   console.log(
     `${req.method} request for '${req.url}' - ${JSON.stringify(req.body)}`
@@ -15,8 +18,10 @@ app.use(function(req, res, next) {
   next();
 });
 
+//Use express serve the static file
 app.use(express.static("./public"));
 
+// middleware for show data
 app.get("/time-api", function(req, res) {
   res.json(data);
   console.log(data);
@@ -28,7 +33,6 @@ app.post("/time-api", function(req, res) {
       elem.intervals++;
       isNew = false;
       res.json(data);
-      // let b = JSON.stringify(data);
       fs.writeFile("./data/timesheet.json", JSON.stringify(data), function(
         err
       ) {
@@ -46,6 +50,5 @@ app.post("/time-api", function(req, res) {
   isNew = true;
 });
 app.listen(3000);
-
 console.log("Express app running on my server");
 module.exports = app;
